@@ -23,9 +23,9 @@ type Config struct {
 	HeartbeatHour  int
 }
 
-func Load() (Config, error) {
-	if err := LoadDotEnv(".env"); err != nil {
-		return Config{}, fmt.Errorf("failed to load .env: %w", err)
+func Load(envFile string) (Config, error) {
+	if err := LoadDotEnv(envFile); err != nil {
+		return Config{}, fmt.Errorf("failed to load %s: %w", envFile, err)
 	}
 
 	interval, _ := strconv.Atoi(getEnv("CHECK_INTERVAL_SEC", "60"))

@@ -1,6 +1,7 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"log"
 	"time"
@@ -10,8 +11,19 @@ import (
 	"monitorchi/internal/notifier"
 )
 
+var version = "dev"
+
 func main() {
-	cfg, err := config.Load()
+	showVersion := flag.Bool("v", false, "print version and exit")
+	envFile := flag.String("config", ".env", "path to .env config file")
+	flag.Parse()
+
+	if *showVersion {
+		fmt.Println("monitorchi", version)
+		return
+	}
+
+	cfg, err := config.Load(*envFile)
 	if err != nil {
 		log.Fatal(err)
 	}
