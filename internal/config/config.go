@@ -18,6 +18,9 @@ type Config struct {
 	SMTPPass string
 	MailFrom string
 	MailTo   string
+
+	TorchiToken    string
+	HeartbeatHour  int
 }
 
 func Load() (Config, error) {
@@ -27,6 +30,8 @@ func Load() (Config, error) {
 
 	interval, _ := strconv.Atoi(getEnv("CHECK_INTERVAL_SEC", "60"))
 	timeout, _ := strconv.Atoi(getEnv("HTTP_TIMEOUT_SEC", "10"))
+
+	heartbeatHour, _ := strconv.Atoi(getEnv("HEARTBEAT_HOUR", "9"))
 
 	cfg := Config{
 		HealthURL:     getEnv("HEALTH_URL", "https://torchi.app/api/health"),
@@ -38,10 +43,15 @@ func Load() (Config, error) {
 		SMTPPass:      os.Getenv("SMTP_PASS"),
 		MailFrom:      os.Getenv("SMTP_USER"),
 		MailTo:        os.Getenv("MAIL_TO"),
+		TorchiToken:   os.Getenv("TORCHI_TOKEN"),
+		HeartbeatHour: heartbeatHour,
 	}
 
-	if cfg.SMTPUser == "" || cfg.SMTPPass == "" || cfg.MailFrom == "" || cfg.MailTo == "" {
-		return Config{}, fmt.Errorf("SMTP_USER, SMTP_PASS, MAIL_FROM, MAIL_TO are required")
+	if cfg.SMTPUser == "" || cfg.SMTPPass == "" || cfg.MailTo == "" {
+		return Config{}, fmt.Errorf("SMTP_USER, SMTP_PASS, MAIL_TO are required")
+	}
+	if cfg.TorchiToken == "" {
+		return Config{}, fmt.Errorf("TORCHI_TOKEN is required")
 	}
 
 	return cfg, nil
